@@ -17,7 +17,7 @@ if not api_key:
 openai.api_key = api_key
 
 # Path to your service account key file
-SERVICE_ACCOUNT_FILE = '/Users/alexanderivory/Another Alex Storage Dropbox/Alexander Ivory/Mac/Documents/100X/AI-powered-teaching-assistant/teaching-assistant-424718-869fd40a1a26.json'
+SERVICE_ACCOUNT_FILE = 'yourfilepathgoeshere'
 SCOPES = ['https://www.googleapis.com/auth/forms.body']
 
 # Authenticate and initialize the API client
