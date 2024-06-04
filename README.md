@@ -1,37 +1,79 @@
-# AI-powered-teaching-assistant
+Sure! Here is a detailed explanation of what the script does and how users can get it running:
 
-Developer Log - May 28, 2024
+### YouTube Transcript Quiz Generator
 
-Objective:
-Develop a Gradio interface to generate a summary and quiz from YouTube video transcripts using OpenAI’s GPT-3.5-turbo model.
+This script fetches the transcript of a YouTube video, generates a summary, and creates a quiz with multiple-choice questions based on the video's content. Users can then take the quiz, submit their answers, and receive feedback on their performance.
 
-Steps Taken:
+### Features
+1. **Fetch YouTube Transcript**: Given a YouTube URL, the script extracts the video's transcript using the `youtube_transcript_api`.
+2. **Generate Summary**: The script uses OpenAI's GPT-3.5-turbo model to generate a concise summary of the transcript.
+3. **Create Quiz Questions**: It generates multiple-choice quiz questions based on the transcript.
+4. **Interactive Quiz**: Users can take the quiz directly on a Streamlit interface, select answers, and submit them.
+5. **Feedback**: After submission, the script provides feedback on the user's performance, indicating the correct answers.
 
-	1.	Environment Setup:
-	•	Loaded OpenAI API key from .env file using dotenv.
-	•	Installed necessary libraries: openai, gradio, youtube_transcript_api, re, and os.
-	2.	Transcript Extraction:
-	•	Utilized YouTubeTranscriptApi to fetch and concatenate video transcripts.
-	3.	Summary Generation:
-	•	Created a function to generate a summary of the transcript using OpenAI’s ChatCompletion.create method with gpt-3.5-turbo.
-	4.	Quiz Question Generation:
-	•	Implemented a function to generate ten quiz questions and four multiple-choice answers for each question from the transcript using OpenAI’s ChatCompletion.create method with gpt-3.5-turbo.
-	5.	Parsing Quiz Questions:
-	•	Developed a function to parse the generated quiz questions into a structured format.
-	6.	Gradio Interface Development:
-	•	Created a Gradio interface with the following components:
-	•	Textbox for YouTube URL input.
-	•	Textbox for displaying the summary.
-	•	Textbox for displaying feedback.
-	•	Ten Radio components for the quiz questions, initially hidden.
-	•	Two Button components for generating the quiz and submitting answers.
-	7.	Dynamic Content Handling:
-	•	Used gr.update to dynamically update the visibility, labels, and choices of the quiz question components based on the generated quiz.
-	8.	Answer Submission and Feedback:
-	•	Implemented answer checking logic to provide feedback on the correctness of the user’s answers.
-	9.	Troubleshooting:
-	•	Addressed several issues during development, including:
-	•	Ensuring the proper visibility and content update of quiz questions.
-	•	Handling errors related to missing or incorrect arguments in function calls.
-	•	Maintaining the state of the quiz questions for accurate answer checking.
- - Alex Ivory
+### How to Run the Script
+
+#### Prerequisites
+1. **Python**: Make sure Python is installed on your machine.
+2. **OpenAI API Key**: Sign up on [OpenAI](https://platform.openai.com/signup) to get your API key.
+3. **YouTube API**: The script uses `youtube_transcript_api` to fetch the transcript from YouTube.
+
+#### Setup Instructions
+
+1. **Clone the Repository**: Clone the repository from GitHub to your local machine.
+   ```sh
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
+   ```
+
+2. **Install Dependencies**: Install the required Python packages using `pip`.
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+3. **Environment Variables**: Create a `.env` file in the root directory of the project and add your OpenAI API key.
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   ```
+
+4. **Run the Script**: Execute the script using Streamlit.
+   ```sh
+   streamlit run streamlit_quiz.py
+   ```
+
+### Script Explanation
+
+Here’s a brief overview of the script's main functions:
+
+1. **get_transcript(url)**:
+   - Extracts the video ID from the YouTube URL.
+   - Fetches the transcript using the `YouTubeTranscriptApi`.
+   - Returns the transcript as a string.
+
+2. **summarize_text(text)**:
+   - Uses OpenAI's GPT-3.5-turbo model to generate a summary of the provided text.
+   - Returns the summary.
+
+3. **generate_quiz_questions(text)**:
+   - Uses OpenAI's GPT-3.5-turbo model to generate ten quiz questions and four multiple-choice answers for each question from the provided text.
+   - Returns the quiz questions as a string.
+
+4. **parse_quiz_questions(quiz_text)**:
+   - Parses the quiz questions and answers from the generated text.
+   - Extracts the correct answer by identifying the line with an asterisk (*).
+   - Returns a list of questions with their choices and correct answers.
+
+5. **check_answers(questions, user_answers)**:
+   - Checks the user's answers against the correct answers.
+   - Provides feedback for each question.
+   - Calculates the user's score.
+   - Returns the feedback and score.
+
+6. **Streamlit Interface**:
+   - Displays the YouTube URL input box.
+   - Shows the generated summary.
+   - Displays the quiz questions with multiple-choice options.
+   - Provides a submit button for users to submit their answers.
+   - Displays feedback after submission.
+
+By following these instructions, users can set up and run the YouTube Transcript Quiz Generator script on their local machine using Streamlit. This script provides an interactive way to test comprehension of YouTube video content through automatically generated quizzes.
