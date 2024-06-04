@@ -1,5 +1,3 @@
-Sure! Here is a detailed explanation of what the script does and how users can get it running:
-
 ### YouTube Transcript Quiz Generator
 
 This script fetches the transcript of a YouTube video, generates a summary, and creates a quiz with multiple-choice questions based on the video's content. Users can then take the quiz, submit their answers, and receive feedback on their performance.
