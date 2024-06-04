@@ -1,22 +1,21 @@
-### YouTube Transcript Quiz Generator
+# YouTube Transcript Quiz Generator
 
 This script fetches the transcript of a YouTube video, generates a summary, and creates a quiz with multiple-choice questions based on the video's content. Users can then take the quiz, submit their answers, and receive feedback on their performance.
 
-### Features
+## Features
 1. **Fetch YouTube Transcript**: Given a YouTube URL, the script extracts the video's transcript using the `youtube_transcript_api`.
 2. **Generate Summary**: The script uses OpenAI's GPT-3.5-turbo model to generate a concise summary of the transcript.
 3. **Create Quiz Questions**: It generates multiple-choice quiz questions based on the transcript.
 4. **Interactive Quiz**: Users can take the quiz directly on a Streamlit interface, select answers, and submit them.
 5. **Feedback**: After submission, the script provides feedback on the user's performance, indicating the correct answers.
 
-### How to Run the Script
+## How to Run the Script
 
-#### Prerequisites
+### Prerequisites
 1. **Python**: Make sure Python is installed on your machine.
 2. **OpenAI API Key**: Sign up on [OpenAI](https://platform.openai.com/signup) to get your API key.
-3. **YouTube API**: The script uses `youtube_transcript_api` to fetch the transcript from YouTube.
 
-#### Setup Instructions
+### Setup Instructions
 
 1. **Clone the Repository**: Clone the repository from GitHub to your local machine.
    ```sh
@@ -39,7 +38,7 @@ This script fetches the transcript of a YouTube video, generates a summary, and 
    streamlit run streamlit_quiz.py
    ```
 
-### Script Explanation
+## Script Explanation
 
 Here’s a brief overview of the script's main functions:
 
@@ -75,3 +74,4 @@ Here’s a brief overview of the script's main functions:
    - Displays feedback after submission.
 
 By following these instructions, users can set up and run the YouTube Transcript Quiz Generator script on their local machine using Streamlit. This script provides an interactive way to test comprehension of YouTube video content through automatically generated quizzes.
+
