@@ -1,20 +1,23 @@
-from openai import OpenAI
-
-client = OpenAI(api_key=api_key,
-api_key=api_key,
-api_key=api_key)
 import streamlit as st
+from openai import OpenAI
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
-import whisper
 import tempfile
 import os
+from transformers import pipeline
+import soundfile as sf
 
+# Initialize the pipeline with the model
+pipe = pipeline("automatic-speech-recognition", model="openai/whisper-large-v3")
+
+# Function to transcribe audio using Hugging Face Whisper
 def transcribe_audio(file_path):
-    model = whisper.load_model("base")
-    result = model.transcribe(file_path)
-    return result["text"]
+    # Load audio file into NumPy array
+    audio_input, _ = sf.read(file_path)
+    transcription = pipe(audio_input)["text"]
+    return transcription
 
+# Function to get YouTube transcript
 def get_transcript(url):
     try:
         video_id_match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
@@ -29,26 +32,31 @@ def get_transcript(url):
     except Exception as e:
         return str(e)
 
-def summarize_text(api_key, text):
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
-    ],
-    max_tokens=150)
+# Function to summarize text using OpenAI API
+def summarize_text(client, text):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
+        ]
+    )
     summary = response.choices[0].message.content.strip()
     return summary
 
-def generate_quiz_questions(api_key, text):
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Generate ten quiz questions and four multiple choice answers for each question from the following text. Mark the correct answer with an asterisk (*) at the beginning:\n\n{text}"}
-    ],
-    max_tokens=300)
+# Function to generate quiz questions using OpenAI API
+def generate_quiz_questions(client, text):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Generate ten quiz questions and four multiple choice answers for each question from the following text. Mark the correct answer with an asterisk (*) at the beginning:\n\n{text}"}
+        ]
+    )
     quiz_questions = response.choices[0].message.content.strip()
     return quiz_questions
 
+# Function to parse quiz questions
 def parse_quiz_questions(quiz_text):
     questions = []
     question_blocks = quiz_text.split("\n\n")
@@ -65,18 +73,21 @@ def parse_quiz_questions(quiz_text):
             questions.append({"question": question, "choices": choices, "correct_answer": correct_answer})
     return questions
 
-def generate_explanation(api_key, question, correct_answer, user_answer):
+# Function to generate explanation using OpenAI API
+def generate_explanation(client, question, correct_answer, user_answer):
     prompt = f"Explain why the correct answer to the following question is '{correct_answer}' and not '{user_answer}':\n\n{question}"
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt}
-    ],
-    max_tokens=150)
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
     explanation = response.choices[0].message.content.strip()
     return explanation
 
-def check_answers(api_key, questions, user_answers):
+# Function to check answers and provide feedback
+def check_answers(client, questions, user_answers):
     feedback = []
     correct_count = 0
     for i, question in enumerate(questions):
@@ -91,7 +102,7 @@ def check_answers(api_key, questions, user_answers):
             })
             correct_count += 1
         else:
-            explanation = generate_explanation(api_key, question['question'], correct_answer, user_answer)
+            explanation = generate_explanation(client, question['question'], correct_answer, user_answer)
             feedback.append({
                 "question": question['question'],
                 "user_answer": user_answer,
@@ -101,17 +112,23 @@ def check_answers(api_key, questions, user_answers):
             })
     return feedback
 
+# Function to handle uploaded file
 def handle_uploaded_file(uploaded_file):
     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         tmp_file.write(uploaded_file.read())
         tmp_file_path = tmp_file.name
     return tmp_file_path
 
+# Streamlit UI
 st.title("YouTube Transcript Quiz Generator")
 
 st.markdown("**Instructions:** Enter your OpenAI API key and paste a YouTube link or upload a media file to generate a quiz.")
 
 api_key = st.text_input("Enter your OpenAI API Key", type="password")
+
+if api_key:
+    client = OpenAI(api_key=api_key)
+
 option = st.selectbox("Choose input type", ("YouTube URL", "Upload audio/video file"))
 
 if "generated_quiz" not in st.session_state:
@@ -123,8 +140,8 @@ if option == "YouTube URL":
         if st.button("Generate Quiz"):
             transcript_text = get_transcript(url)
             if "Error" not in transcript_text:
-                summary = summarize_text(api_key, transcript_text)
-                quiz_text = generate_quiz_questions(api_key, transcript_text)
+                summary = summarize_text(client, transcript_text)
+                quiz_text = generate_quiz_questions(client, transcript_text)
                 questions = parse_quiz_questions(quiz_text)
 
                 st.session_state.summary = summary
@@ -137,11 +154,12 @@ if option == "Upload audio/video file":
     if uploaded_file and api_key:
         if st.button("Generate Quiz"):
             tmp_file_path = handle_uploaded_file(uploaded_file)
-            transcript_text = transcribe_audio(tmp_file_path)
+            with st.spinner('Transcribing audio...'):
+                transcript_text = transcribe_audio(tmp_file_path)
             os.remove(tmp_file_path)
             if "Error" not in transcript_text:
-                summary = summarize_text(api_key, transcript_text)
-                quiz_text = generate_quiz_questions(api_key, transcript_text)
+                summary = summarize_text(client, transcript_text)
+                quiz_text = generate_quiz_questions(client, transcript_text)
                 questions = parse_quiz_questions(quiz_text)
 
                 st.session_state.summary = summary
@@ -166,7 +184,7 @@ if st.session_state.generated_quiz:
     if st.button("Submit Answers"):
         if "questions" in st.session_state and st.session_state.questions:
             with st.spinner('Processing your answers...'):
-                feedback = check_answers(api_key, st.session_state.questions, st.session_state.user_answers)
+                feedback = check_answers(client, st.session_state.questions, st.session_state.user_answers)
                 st.write("## Feedback")
                 for i, item in enumerate(feedback):
                     with st.expander(f"Question {i+1} Feedback"):

@@ -1,4 +1,6 @@
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=api_key)
 import gradio as gr
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
@@ -18,7 +20,6 @@ if not api_key:
 if not api_key.startswith("sk-") or len(api_key) < 20:
     raise ValueError("Malformed API key. Please check your .env file.")
 
-openai.api_key = api_key
 
 def get_transcript(url):
     try:
@@ -39,14 +40,12 @@ def get_transcript(url):
 
 def summarize_text(text):
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=f"Please summarize the following text:\n\n{text}",
-            max_tokens=150,
-            n=1,
-            stop=None,
-            temperature=0.5
-        )
+        response = client.completions.create(engine="text-davinci-003",
+        prompt=f"Please summarize the following text:\n\n{text}",
+        max_tokens=150,
+        n=1,
+        stop=None,
+        temperature=0.5)
         summary = response.choices[0].text.strip()
         return summary
     except Exception as e:
@@ -54,14 +53,12 @@ def summarize_text(text):
 
 def generate_quiz_questions(text):
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=f"Generate ten quiz questions and answers from the following text:\n\n{text}",
-            max_tokens=300,
-            n=1,
-            stop=None,
-            temperature=0.5
-        )
+        response = client.completions.create(engine="text-davinci-003",
+        prompt=f"Generate ten quiz questions and answers from the following text:\n\n{text}",
+        max_tokens=300,
+        n=1,
+        stop=None,
+        temperature=0.5)
         quiz_questions = response.choices[0].text.strip()
         return quiz_questions
     except Exception as e:

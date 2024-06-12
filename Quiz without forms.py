@@ -1,4 +1,6 @@
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=api_key)
 import gradio as gr
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
@@ -12,7 +14,6 @@ api_key = os.getenv('OPENAI_API_KEY')
 if not api_key:
     raise ValueError("API key is not set. Please check your.env file and ensure OPENAI_API_KEY is set.")
 
-openai.api_key = api_key
 
 def get_transcript(url):
     try:
@@ -24,27 +25,23 @@ def get_transcript(url):
         return str(e)
 
 def summarize_text(text):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
-        ],
-        max_tokens=150
-    )
-    summary = response.choices[0]['message']['content'].strip()
+    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"Summarize the following text:\n\n{text}"}
+    ],
+    max_tokens=150)
+    summary = response.choices[0].message.content.strip()
     return summary
 
 def generate_quiz_questions(text):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": f"Generate ten quiz questions and four multiple choice answers for each question from the following text:\n\n{text}"}
-        ],
-        max_tokens=1500
-    )
-    quiz_questions = response.choices[0]['message']['content'].strip()
+    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"Generate ten quiz questions and four multiple choice answers for each question from the following text:\n\n{text}"}
+    ],
+    max_tokens=1500)
+    quiz_questions = response.choices[0].message.content.strip()
     return quiz_questions
 
 def parse_quiz_questions(quiz_text):
