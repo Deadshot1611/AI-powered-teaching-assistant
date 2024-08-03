@@ -1,77 +1,115 @@
-# YouTube Transcript Quiz Generator
+# AI-Powered Teaching Assistant
 
-This script fetches the transcript of a YouTube video, generates a summary, and creates a quiz with multiple-choice questions based on the video's content. Users can then take the quiz, submit their answers, and receive feedback on their performance.
+Welcome to the AI-Powered Teaching Assistant project! This project features three main bots: a Summary Bot, a Doubt Solving Bot, and a Quiz Generation Bot, all integrated into a cohesive website. This assistant is designed to help students by summarizing content, answering questions, and generating quizzes based on YouTube videos or uploaded media files.
 
-## Features
-1. **Fetch YouTube Transcript**: Given a YouTube URL, the script extracts the video's transcript using the `youtube_transcript_api`.
-2. **Generate Summary**: The script uses OpenAI's GPT-3.5-turbo model to generate a concise summary of the transcript.
-3. **Create Quiz Questions**: It generates multiple-choice quiz questions based on the transcript.
-4. **Interactive Quiz**: Users can take the quiz directly on a Streamlit interface, select answers, and submit them.
-5. **Feedback**: After submission, the script provides feedback on the user's performance, indicating the correct answers.
+[Project Link](https://deadshot1611.github.io/AI-powered-teaching-assistant/)
 
-## How to Run the Script
+## Table of Contents
+- [Project Overview and Architecture](#project-overview-and-architecture)
+- [Setup and Installation Instructions](#setup-and-installation-instructions)
+- [Usage Guide](#usage-guide)
+  - [Summary Bot](#summary-bot)
+  - [Doubt Solving Bot](#doubt-solving-bot)
+  - [Quiz Generation Bot](#quiz-generation-bot)
+- [API Documentation](#api-documentation)
 
-### Prerequisites
-1. **Python**: Make sure Python is installed on your machine.
-2. **OpenAI API Key**: Sign up on [OpenAI](https://platform.openai.com/signup) to get your API key.
+## Project Overview and Architecture
 
-### Setup Instructions
+This project utilizes several technologies:
+- **Streamlit** for creating interactive web applications.
+- **OpenAI API** for natural language processing and understanding.
+- **YouTube Transcript API** for extracting transcripts from YouTube videos.
+- **Pydub** for audio file manipulation.
 
-1. **Clone the Repository**: Clone the repository from GitHub to your local machine.
-   ```sh
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
-   ```
+The overall architecture of the project involves:
+1. **Summary Bot**: Extracts and summarizes transcripts from YouTube videos or uploaded media files.
+2. **Doubt Solving Bot**: Provides answers to user questions based on the transcript of a video or audio file.
+3. **Quiz Generation Bot**: Generates quiz questions from the transcript of a video or audio file.
 
-2. **Install Dependencies**: Install the required Python packages using `pip`.
-   ```sh
-   pip install -r requirements.txt
-   ```
+## Setup and Installation Instructions
 
-3. **Environment Variables**: Create a `.env` file in the root directory of the project and add your OpenAI API key.
-   ```
-   OPENAI_API_KEY=your_openai_api_key
-   ```
+To set up this project locally, follow these steps:
 
-4. **Run the Script**: Execute the script using Streamlit.
-   ```sh
-   streamlit run streamlit_quiz.py
-   ```
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/Deadshot1611/AI-powered-teaching-assistant.git
+    cd AI-powered-teaching-assistant
+    ```
 
-## Script Explanation
+2. Create a virtual environment and activate it:
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
 
-Here’s a brief overview of the script's main functions:
+3. Install the required dependencies:
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-1. **get_transcript(url)**:
-   - Extracts the video ID from the YouTube URL.
-   - Fetches the transcript using the `YouTubeTranscriptApi`.
-   - Returns the transcript as a string.
+4. Set up environment variables:
+    - Create a `.env` file in the root directory.
+    - Add your OpenAI API key to the `.env` file:
+        ```env
+        OPENAI_API_KEY=your_openai_api_key
+        ```
 
-2. **summarize_text(text)**:
-   - Uses OpenAI's GPT-3.5-turbo model to generate a summary of the provided text.
-   - Returns the summary.
+5. Run the Streamlit application:
+    ```sh
+    streamlit run app.py
+    ```
 
-3. **generate_quiz_questions(text)**:
-   - Uses OpenAI's GPT-3.5-turbo model to generate ten quiz questions and four multiple-choice answers for each question from the provided text.
-   - Returns the quiz questions as a string.
+## Usage Guide
 
-4. **parse_quiz_questions(quiz_text)**:
-   - Parses the quiz questions and answers from the generated text.
-   - Extracts the correct answer by identifying the line with an asterisk (*).
-   - Returns a list of questions with their choices and correct answers.
+### Summary Bot
 
-5. **check_answers(questions, user_answers)**:
-   - Checks the user's answers against the correct answers.
-   - Provides feedback for each question.
-   - Calculates the user's score.
-   - Returns the feedback and score.
+The Summary Bot extracts and summarizes transcripts from YouTube videos or uploaded media files.
 
-6. **Streamlit Interface**:
-   - Displays the YouTube URL input box.
-   - Shows the generated summary.
-   - Displays the quiz questions with multiple-choice options.
-   - Provides a submit button for users to submit their answers.
-   - Displays feedback after submission.
+#### Example Usage:
+1. Choose the input type: YouTube URL or Upload audio/video file.
+2. For YouTube URL, enter the video URL and click "Generate Summary".
+3. For uploading a file, choose an audio or video file and click "Generate Summary".
+4. The summary of the content will be displayed in a text area.
 
-By following these instructions, users can set up and run the YouTube Transcript Quiz Generator script on their local machine using Streamlit. This script provides an interactive way to test comprehension of YouTube video content through automatically generated quizzes.
+#### Brief Explanation:
+- Uses the YouTube Transcript API to fetch video transcripts.
+- Uses OpenAI's GPT-3.5-turbo for summarizing the fetched transcripts.
 
+### Doubt Solving Bot
+
+The Doubt Solving Bot answers user questions based on the transcript of a video or audio file.
+
+#### Example Usage:
+1. Choose the input type: YouTube URL or Upload audio/video file.
+2. For YouTube URL, enter the video URL.
+3. For uploading a file, choose an audio or video file.
+4. Ask a question related to the content and click "Get Answer".
+5. The bot will provide an answer based on the transcript.
+
+#### Brief Explanation:
+- Uses the same process as the Summary Bot to fetch transcripts.
+- Uses OpenAI's GPT-3.5-turbo to answer questions based on the transcripts.
+
+### Quiz Generation Bot
+
+The Quiz Generation Bot generates quiz questions from the transcript of a video or audio file.
+
+#### Example Usage:
+1. Choose the input type: YouTube URL or Upload audio/video file.
+2. For YouTube URL, enter the video URL.
+3. For uploading a file, choose an audio or video file.
+4. Click "Generate Quiz" to get quiz questions based on the content.
+
+#### Brief Explanation:
+- Follows the same process to fetch transcripts.
+- Uses OpenAI's GPT-3.5-turbo to generate quiz questions from the transcript.
+
+## API Documentation
+
+- **YouTube Transcript API**: Used to fetch transcripts of YouTube videos.
+- **OpenAI API**: Used for summarization, question answering, and quiz generation.
+- **Pydub**: Used for converting and manipulating audio files for transcription.
+
+For detailed implementation, please refer to the source code files in the repository.
+
+Feel free to reach out if you have any questions or need further assistance.
